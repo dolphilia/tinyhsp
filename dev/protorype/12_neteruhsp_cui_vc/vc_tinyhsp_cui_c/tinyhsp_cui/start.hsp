@@ -1,0 +1,10 @@
+gosub *test
+mes "b"
+end
+*test
+	mes "a"
+	gosub *test2
+	return
+*test2
+	mes "c"
+	return

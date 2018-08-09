@@ -1,0 +1,4 @@
+sum = 0
+repeat 1000000
+sum = sum + 1
+loop

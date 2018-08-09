@@ -1,0 +1,17 @@
+# Makefile
+
+parser: parser_test.o parser.o lexer.o
+	clang -Wall -O2 -o ./bin/parser_test ./obj/parser_test.o ./obj/parser.o ./obj/lexer.o
+	rm -f ./obj/parser_test.o ./obj/parser.o ./obj/lexer.o
+
+parser_test.o: ./test/parser_test.c
+	clang -o ./obj/parser_test.o -c ./test/parser_test.c
+
+parser.o: ./src/parser.c
+	clang -o ./obj/parser.o -c ./src/parser.c
+
+lexer.o: ./src/lexer.c
+	clang -o ./obj/lexer.o -c ./src/lexer.c
+
+clean:
+	rm -f ./obj/parser_test.o ./obj/parser.o ./obj/lexer.o

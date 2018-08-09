@@ -1,0 +1,6 @@
+title "HelloWorld"
+color 255,0,0
+line 10,10,100,10
+line 10,10,10,100
+line 100,10,10,100
+stop

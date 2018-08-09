@@ -1,0 +1,18 @@
+﻿  stb_vorbis.c
+  tinyhsp.c
+tinyhsp.c(837): warning C4244: '-=': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(838): warning C4244: '-=': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(842): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(843): warning C4244: '+=': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(816): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(817): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(2253): warning C4018: '>': signed と unsigned の数値を比較しようとしました。
+tinyhsp.c(2286): warning C4090: '関数': 異なる 'const' 修飾子です。
+tinyhsp.c(2320): warning C4244: '関数': 'dr_uint64' から '::size_t' への変換です。データが失われる可能性があります。
+tinyhsp.c(2322): warning C4244: '関数': 'dr_uint64' から 'int' への変換です。データが失われる可能性があります。
+tinyhsp.c(2335): warning C4013: 関数 'stb_vorbis_decode_filename' は定義されていません。int 型の値を返す外部関数と見なします。
+tinyhsp.c(2321): warning C4244: '初期化中': 'dr_uint64' から '::size_t' への変換です。データが失われる可能性があります。
+  コード生成しています。
+  All 517 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  コード生成が終了しました。
+  tinyhsp.vcxproj -> C:\Users\dolphilia\Documents\GitHub\tinyhsp\tinyhsp\Release\tinyhsp.exe

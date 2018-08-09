@@ -1,0 +1,14 @@
+# Makefile
+
+lexer_test: lexer_test.o lexer.o
+	clang -Wall -O2 -o ./bin/lexer_test ./obj/lexer_test.o ./obj/lexer.o
+	rm -f ./obj/lexer_test.o ./obj/lexer.o
+
+lexer_test.o: ./test/lexer_test.c
+	clang -o ./obj/lexer_test.o -c ./test/lexer_test.c
+
+lexer.o: ./src/lexer.c
+	clang -o ./obj/lexer.o -c ./src/lexer.c
+
+clean:
+	rm -f ./obj/lexer_test.o ./obj/lexer.o

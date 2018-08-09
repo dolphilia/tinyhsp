@@ -1,0 +1,18 @@
+color 255,0,0
+line 0,0,100,100
+line 0,100,100,100
+line 0,0,0,100
+color 0,255,0
+paint 30,35
+color 0,0,255
+paint 120,0
+
+color 255,255,255
+font "",24,0
+mes "HelloWorld!"
+
+repeat
+    title ""+mousex+":"+mousey
+    wait 5
+loop
+stop

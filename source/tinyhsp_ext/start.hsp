@@ -1,0 +1,9 @@
+title "HelloWorld"
+mes "HelloWorld"
+mmload "test.ogg",1
+mmplay
+wait 300
+mmstop
+mmload "test.wav"
+mmplay
+stop

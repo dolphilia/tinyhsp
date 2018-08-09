@@ -1,0 +1,7 @@
+mes "HelloWorld"
+line 0,0, 100,100
+repeat
+	title ""+mousex
+	wait 5
+loop
+stop

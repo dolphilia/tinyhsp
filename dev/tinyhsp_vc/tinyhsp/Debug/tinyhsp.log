@@ -1,0 +1,20 @@
+﻿  tinyhsp.c
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(855): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(869): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1317): warning C4090: '関数': 異なる 'const' 修飾子です。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1609): warning C4090: '関数': 異なる 'const' 修飾子です。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1858): warning C4090: '関数': 異なる 'const' 修飾子です。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1891): warning C4244: '関数': 'int' から 'float' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1914): warning C4090: '関数': 異なる 'const' 修飾子です。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1975): warning C4244: '=': 'double' から 'ALshort' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1981): warning C4244: '=': 'double' から 'ALshort' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1994): warning C4244: '=': 'double' から 'ALshort' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(1997): warning C4244: '=': 'double' から 'ALshort' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(2001): warning C4244: '=': 'double' から 'ALshort' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(2062): warning C4244: '初期化中': 'double' から 'const int' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(2135): warning C4244: '関数': 'double' から 'float' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(3760): warning C4244: '関数': 'double' から 'int' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(5725): warning C4244: '関数': 'int' から 'float' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\tinyhsp\tinyhsp\tinyhsp.c(4566): warning C4716: '_aj': 値を返さなければいけません
+  tinyhsp.vcxproj -> C:\Users\dolphilia\Documents\GitHub\tinyhsp\tinyhsp\Debug\tinyhsp.exe
+  tinyhsp.vcxproj -> C:\Users\dolphilia\Documents\GitHub\tinyhsp\tinyhsp\Debug\tinyhsp.pdb (Partial PDB)

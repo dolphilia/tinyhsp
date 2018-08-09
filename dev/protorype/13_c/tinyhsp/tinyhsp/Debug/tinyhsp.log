@@ -1,0 +1,8 @@
+﻿  tinyhsp.c
+c:\users\dolphilia\documents\github\tinyhsp\prototype\13_c\tinyhsp\tinyhsp\tinyhsp.c(1073): warning C4090: '関数': 異なる 'const' 修飾子です。
+c:\users\dolphilia\documents\github\tinyhsp\prototype\13_c\tinyhsp\tinyhsp\tinyhsp.c(1398): warning C4244: '初期化中': 'double' から 'const int' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\prototype\13_c\tinyhsp\tinyhsp\tinyhsp.c(3075): warning C4244: '関数': 'double' から 'int' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\prototype\13_c\tinyhsp\tinyhsp\tinyhsp.c(3289): warning C4244: '関数': 'const double' から 'int' への変換です。データが失われる可能性があります。
+c:\users\dolphilia\documents\github\tinyhsp\prototype\13_c\tinyhsp\tinyhsp\tinyhsp.c(3879): warning C4716: '_aj': 値を返さなければいけません
+  tinyhsp.vcxproj -> C:\Users\dolphilia\Documents\GitHub\tinyhsp\prototype\13_c\tinyhsp\Debug\tinyhsp.exe
+  tinyhsp.vcxproj -> C:\Users\dolphilia\Documents\GitHub\tinyhsp\prototype\13_c\tinyhsp\Debug\tinyhsp.pdb (Partial PDB)

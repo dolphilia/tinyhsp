@@ -1,0 +1,10 @@
+f = 440.0
+n = 1.0
+
+repeat 12
+	wave f
+	f = 440.0 * powf(2.0, (n / 12.0))
+	n = n + 1.0
+loop
+
+stop

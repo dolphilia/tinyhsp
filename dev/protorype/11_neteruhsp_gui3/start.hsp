@@ -1,0 +1,7 @@
+pos 32, 32
+picload "miyuzu.jpg"
+font "mgenplus-1c-regular.ttf", 60
+pos 80, 360
+mes "こんにちは！你好！"
+redraw 1
+stop

@@ -1,0 +1,11 @@
+randomize
+font "mplus-1c-bold.ttf", 72
+
+repeat
+    color rnd(255), rnd(255), rnd(255)
+    pos rnd(640), rnd(480)
+    mes "こんにちは、世界。"
+    wait 5
+loop
+
+stop
