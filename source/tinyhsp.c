@@ -1,6 +1,6 @@
-﻿//#define __HSPCUI__
+﻿#define __HSPCUI__
 //#define __HSPSTD__
-#define __HSPEXT__
+//#define __HSPEXT__
 
 // 上記のどれか１つを定義する
 
