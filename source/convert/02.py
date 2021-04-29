@@ -1,12 +1,12 @@
 # coding: UTF-8
 
-# グローバルな擬似構造体
+# グローバルな擬似メモリ
 _g = {
     'index': 0,
     'dict': {}
 }
 
-# セル
+# セル（擬似構造体）
 def new_cell(item = None, next = None):
     global _g
     _g['dict'].update({
@@ -19,7 +19,7 @@ def new_cell(item = None, next = None):
     _g['index'] += 1
     return _g['index'] - 1
 
-# リスト
+# リスト（擬似構造体）
 def new_list(top = None):
     global _g
     _g['dict'].update({
