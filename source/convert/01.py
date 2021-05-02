@@ -307,9 +307,9 @@ def new_value_t(type_ = 0, ivalue_ = 0, dvalue_ = 0.0, svalue_ = '', variable_ =
 def new_value_stack_t(stack_ = 0, top_ = 0, max_ = 0):
     global _g
     _g.dict.update({
-        _g.index : { 
+        _g.index : {
             'type': 'value_stack_t',
-            'stack_': stack_, #**value_t
+            'stack_': [], #**value_t
             'top_': top_, #int
             'max_': max_, #int
         },
@@ -673,56 +673,56 @@ def get_token(c):
                 _g.dict[res]['tag_'] = token_tag.TOKEN_EOF
                 # 行終わり
                 break
-            if _g.dict[c]['script_'][p] == '\r' or _g.dict[c]['script_'][p] == '\f':
+            elif _g.dict[c]['script_'][p] == '\r' or _g.dict[c]['script_'][p] == '\f':
                 p += 1
                 goto_flag = True
                 break
-            if _g.dict[c]['script_'][p] == '\n':
+            elif _g.dict[c]['script_'][p] == '\n':
                 # この位置はマーキング
                 _g.dict[c]['line_'] += 1
                 p += 1
                 _g.dict[c]['line_head_'] = p
                 _g.dict[res]['tag_'] = token_tag.TOKEN_EOL
                 break
-            if _g.dict[c]['script_'][p] == ':': # ステートメント終わり
+            elif _g.dict[c]['script_'][p] == ':': # ステートメント終わり
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_EOS
                 break
-            if _g.dict[c]['script_'][p] == '{': # 微妙な文字
+            elif _g.dict[c]['script_'][p] == '{': # 微妙な文字
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_LBRACE
                 break
-            if _g.dict[c]['script_'][p] == '}':
+            elif _g.dict[c]['script_'][p] == '}':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_RBRACE
                 break
-            if _g.dict[c]['script_'][p] == '(':
+            elif _g.dict[c]['script_'][p] == '(':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_LPARENTHESIS
                 break
-            if _g.dict[c]['script_'][p] == ')':
+            elif _g.dict[c]['script_'][p] == ')':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_RPARENTHESIS
                 break
-            if _g.dict[c]['script_'][p] == ',':
+            elif _g.dict[c]['script_'][p] == ',':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_COMMA
                 break
-            if _g.dict[c]['script_'][p] == '|': # 演算子
+            elif _g.dict[c]['script_'][p] == '|': # 演算子
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_BOR
                 break
-            if _g.dict[c]['script_'][p] == '&':
+            elif _g.dict[c]['script_'][p] == '&':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_BAND
                 break
-            if _g.dict[c]['script_'][p] == '!':
+            elif _g.dict[c]['script_'][p] == '!':
                 p += 1
                 if _g.dict[c]['script_'][p] == '=':
                     p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_NEQ
                 break
-            if _g.dict[c]['script_'][p] == '>':
+            elif _g.dict[c]['script_'][p] == '>':
                 p += 1
                 if _g.dict[c]['script_'][p] == '=':
                     p += 1
@@ -730,7 +730,7 @@ def get_token(c):
                 else:
                     _g.dict[res]['tag_'] = token_tag.TOKEN_OP_GT
                 break
-            if _g.dict[c]['script_'][p] == '<':
+            elif _g.dict[c]['script_'][p] == '<':
                 p += 1
                 if _g.dict[c]['script_'][p] == '=':
                     p += 1
@@ -738,27 +738,27 @@ def get_token(c):
                 else:
                     _g.dict[res]['tag_'] = token_tag.TOKEN_OP_LT
                 break
-            if _g.dict[c]['script_'][p] == '+':
+            elif _g.dict[c]['script_'][p] == '+':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_ADD
                 break
-            if _g.dict[c]['script_'][p] == '-':
+            elif _g.dict[c]['script_'][p] == '-':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_SUB
                 break
-            if _g.dict[c]['script_'][p] == '*':
+            elif _g.dict[c]['script_'][p] == '*':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_MUL
                 break
-            if _g.dict[c]['script_'][p] == '/':
+            elif _g.dict[c]['script_'][p] == '/':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_DIV
                 break
-            if _g.dict[c]['script_'][p] == '\\':
+            elif _g.dict[c]['script_'][p] == '\\':
                 p += 1
                 _g.dict[res]['tag_'] = token_tag.TOKEN_OP_MOD
                 break
-            if _g.dict[c]['script_'][p] == '=': # 代入
+            elif _g.dict[c]['script_'][p] == '=': # 代入
                 p += 1
                 if _g.dict[c]['script_'][p] == '=':
                     p += 1
@@ -766,7 +766,7 @@ def get_token(c):
                 else:
                     _g.dict[res]['tag_'] = token_tag.TOKEN_ASSIGN
                 break
-            if _g.dict[c]['script_'][p] == '\"': # 文字列
+            elif _g.dict[c]['script_'][p] == '\"': # 文字列
                 p += 1
                 s = p
                 while _g.dict[c]['script_'][p]  != '\"':
@@ -782,45 +782,45 @@ def get_token(c):
                 _g.dict[res]['tag_'] = token_tag.TOKEN_STRING
                 p += 1
                 break
-            if _g.dict[c]['script_'][p] == ';': # コメント
+            elif _g.dict[c]['script_'][p] == ';': # コメント
                 p += 1
                 while _g.dict[c]['script_'][p] != '\n' and _g.dict[c]['script_'][p] != '\0':
                     p += 1
                 goto_flag = True
                 break
-            # default:
-            if is_space(_g.dict[c]['script_'][p]): # スペース
-                p += 1
-                _g.dict[res]['left_space_'] = True
-                while is_space(_g.dict[c]['script_'][p]):
+            else:
+                if is_space(_g.dict[c]['script_'][p]): # スペース
                     p += 1
-                goto_frag = True
+                    _g.dict[res]['left_space_'] = True
+                    while is_space(_g.dict[c]['script_'][p]):
+                        p += 1
+                    goto_frag = True
+                    break
+                elif is_number(_g.dict[c]['script_'][p]): # 数値
+                    if _g.dict[c]['script_'][p] == '0':
+                        p += 1
+                    else:
+                        while is_number(_g.dict[c]['script_'][p]):
+                            p += 1
+                    if _g.dict[c]['script_'][p] == '.':
+                        p += 1
+                        while is_number(_g.dict[c]['script_'][p]):
+                            p += 1
+                        _g.dict[res]['tag_'] = token_tag.TOKEN_REAL
+                    else:
+                        _g.dict[res]['tag_'] = token_tag.TOKEN_INTEGER
+                elif is_alpha(_g.dict[c]['script_'][p]): # 何らかの識別子
+                    p += 1
+                    while is_rest_ident(_g.dict[c]['script_'][p]):
+                        p += 1
+                    _g.dict[res]['tag_'] = token_tag.TOKEN_IDENTIFIER
+                    shadow = query_token_shadow(c, prev_cursor, p - prev_p)
+                    if shadow != -1:
+                        _g.dict[res]['tag_'] = shadow
+                else: # もう読めない
+                    print("Unknown character[%c]@@ %d Row", _g.dict[c]['script_'][p], _g.dict[c]['line_']) # 読み取れない文字
+                    sys.exit()
                 break
-            elif is_number(_g.dict[c]['script_'][p]): # 数値
-                if _g.dict[c]['script_'][p] == '0':
-                    p += 1
-                else:
-                    while is_number(_g.dict[c]['script_'][p]):
-                        p += 1
-                if _g.dict[c]['script_'][p] == '.':
-                    p += 1
-                    while is_number(_g.dict[c]['script_'][p]):
-                        p += 1
-                    _g.dict[res]['tag_'] = token_tag.TOKEN_REAL
-                else:
-                    _g.dict[res]['tag_'] = token_tag.TOKEN_INTEGER
-            elif is_alpha(_g.dict[c]['script_'][p]): # 何らかの識別子
-                p += 1
-                while is_rest_ident(_g.dict[c]['script_'][p]):
-                    p += 1
-                _g.dict[res]['tag_'] = token_tag.TOKEN_IDENTIFIER
-                shadow = query_token_shadow(c, prev_cursor, p - prev_p)
-                if shadow != -1:
-                    _g.dict[res]['tag_'] = shadow
-            else: # もう読めない
-                print("Unknown character[%c]@@ %d Row", _g.dict[c]['script_'][p], _g.dict[c]['line_']) # 読み取れない文字
-                sys.exit()
-            break
         if goto_flag == True:
             continue
         break
@@ -852,15 +852,17 @@ def create_token_string(str, len):
         if str[i] == '\\' and (i + 1) < len:
             if str[i + 1] == 't':
                 res[w] = '\t'
-            if str[i + 1] == 'n':
+            elif str[i + 1] == 'n':
                 res[w] = '\n'
-            if str[i + 1] == '\"':
+            elif str[i + 1] == '\"':
                 res[w] = '\"'
-            print("Unknown escape sequence@@ %c%c", str[i], str[i + 1]) # 読み取れないエスケープシーケンス
-            sys.exit()
+            else:
+                print("Unknown escape sequence@@ %c%c", str[i], str[i + 1]) # 読み取れないエスケープシーケンス
+                sys.exit()
+            i += 1
         else:
             res[w] = str[i]
-        i += 2
+        i += 1
         w += 1
     return res
 
@@ -1066,14 +1068,14 @@ def parse_control_safe(c):
 
     if keyword == keyword_tag.KEYWORD_END:
         return create_ast_node(node_tag.NODE_END, None, None)
-    if keyword == keyword_tag.KEYWORD_RETURN:
+    elif keyword == keyword_tag.KEYWORD_RETURN:
         next = read_token(c)
         unread_token(c, 1)
         expr = None
         if not is_eos_like_token(_g.dict[next]['tag_']):
             expr = parse_expression(c)
         return create_ast_node(node_tag.NODE_RETURN, expr, None)
-    if keyword == keyword_tag.KEYWORD_GOTO or keyword == keyword_tag.KEYWORD_GOSUB:
+    elif keyword == keyword_tag.KEYWORD_GOTO or keyword == keyword_tag.KEYWORD_GOSUB:
         label = parse_label_safe(c)
         if label == None:
             print("Labels must be specified for goto or gosub.@@ %d Row", _g.dict[ident]['appear_line_']) # gotoまたはgosubにはラベルの指定が必須です
@@ -1083,20 +1085,20 @@ def parse_control_safe(c):
         else:
             tmp = node_tag.NODE_GOSUB
         return create_ast_node(tmp, label, None)
-    if keyword == keyword_tag.KEYWORD_REPEAT:
+    elif keyword == keyword_tag.KEYWORD_REPEAT:
         next = read_token(c)
         unread_token(c, 1)
         expr = None
         if not is_eos_like_token(_g.dict[next]['tag_']):
             expr = parse_expression(c)
         return create_ast_node(node_tag.NODE_REPEAT, expr, None)
-    if keyword == keyword_tag.KEYWORD_LOOP:
+    elif keyword == keyword_tag.KEYWORD_LOOP:
         return create_ast_node(node_tag.NODE_LOOP, None, None)
-    if keyword == keyword_tag.KEYWORD_CONTINUE:
+    elif keyword == keyword_tag.KEYWORD_CONTINUE:
         return create_ast_node(node_tag.NODE_CONTINUE, None, None)
-    if keyword == keyword_tag.KEYWORD_BREAK:
+    elif keyword == keyword_tag.KEYWORD_BREAK:
         return create_ast_node(node_tag.NODE_BREAK, None, None)
-    if keyword == keyword_tag.KEYWORD_IF:
+    elif keyword == keyword_tag.KEYWORD_IF:
         expr = parse_expression(c)
         next = read_token(c)
         repair_token = False
@@ -1179,7 +1181,7 @@ def parse_control_safe(c):
             unread_token(c, 1)
         dispatcher = create_ast_node(node_tag.NODE_IF_DISPATCHER, true_statements, false_statements)
         return create_ast_node(node_tag.NODE_IF, expr, dispatcher)
-    if keyword == keyword_tag.KEYWORD_ELSE:
+    elif keyword == keyword_tag.KEYWORD_ELSE:
         print("Detected an unprocessed else.@@ %d Row", _g.dict[ident]['appear_line_']) # ハンドルされないelseを検出しました
         sys.exit()
     unread_token(c, 1)
@@ -1725,13 +1727,13 @@ def value_move(v, s):
     _g.dict[v]['type_'] =value_tag.VALUE_STRING
     _g.dict[v]['svalue_'] = s
 
-def value_move2(to, from):
+def value_move2(to_, from_):
     global _g
-    clear_value(to)
-    _g.dict[to]['type_'] = _g.dict[from]['type_']
-    _g.dict[to]['value_'] = _g.dict[from]['value_']
-    _g.dict[from]['type_'] = value_tag.VALUE_NONE
-    _g.dict[from]['value_'] = 0
+    clear_value(to_)
+    _g.dict[to_]['type_'] = _g.dict[from_]['type_']
+    _g.dict[to_]['value_'] = _g.dict[from_]['value_']
+    _g.dict[from_]['type_'] = value_tag.VALUE_NONE
+    _g.dict[from_]['value_'] = 0
 
 def value_get_primitive_tag(r):
     global _g
@@ -1739,6 +1741,439 @@ def value_get_primitive_tag(r):
         tmp = _g.dict[r]['variable_']
         return _g.dict[tmp]['type_']
     return _g.dict[r]['type_']
+
+def value_calc_boolean(r):
+    if value_get_primitive_tag(r) == value_tag.VALUE_INT:
+        return value_calc_int(r) != 0
+    elif value_get_primitive_tag(r) == value_tag.VALUE_DOUBLE:
+        return value_calc_double(r) != 0.0
+    elif value_get_primitive_tag(r) == value_tag.VALUE_STRING:
+        return value_calc_int(r) != 0
+    else:
+        #assert(false)
+        pass
+    return False
+
+def value_calc_int(r):
+    global _g
+    if _g.dict[r]['type_'] == value_tag.VALUE_INT:
+        return _g.dict[r]['ivalue_']
+    elif _g.dict[r]['type_'] == value_tag.VALUE_DOUBLE:
+        return int(_g.dict[r]['dvalue_'])
+    elif _g.dict[r]['type_'] == value_tag.VALUE_STRING:
+        return int(_g.dict[r]['svalue_'])
+    elif _g.dict[r]['type_'] == value_tag.VALUE_VARIABLE:
+        return variable_calc_int(_g.dict[r]['variable_'], _g.dict[r]['index_'])
+    else:
+        #assert(false);
+        pass
+    return 0
+
+def value_calc_double(r):
+    global _g
+    if _g.dict[r]['type_']==value_tag.VALUE_INT:
+        return float(_g.dict[r]['ivalue_'])
+    elif _g.dict[r]['type_']==value_tag.VALUE_DOUBLE:
+        return float(_g.dict[r]['dvalue_'])
+    elif _g.dict[r]['type_']==value_tag.VALUE_STRING:
+        return float(_g.dict[r]['svalue_'])
+    elif _g.dict[r]['type_']==value_tag.VALUE_VARIABLE:
+        return variable_calc_double(_g.dict[r]['variable_'], _g.dict[r]['index_'])
+    else:
+        #assert(false);
+        pass
+    return 0.0
+
+def value_calc_string(r):
+    global _g
+    s = ''
+    if _g.dict[r]['type_'] == value_tag.VALUE_INT:
+        s = create_string_from(_g.dict[r]['ivalue_'])
+    elif _g.dict[r]['type_'] == value_tag.VALUE_DOUBLE:
+        s = create_string_from2(_g.dict[r]['dvalue_'])
+    elif _g.dict[r]['type_'] == value_tag.VALUE_STRING:
+        s = create_string3(_g.dict[r]['svalue_'])
+    elif _g.dict[r]['type_'] == value_tag.VALUE_VARIABLE:
+        s = variable_calc_string(_g.dict[r]['variable_'], _g.dict[r]['index_'])
+    else:
+        #assert(false)
+        pass
+    return s
+
+def value_convert_type(to, r):
+    global _g
+    if to == _g.dict[r]['type_']:
+        return create_value5(r)
+    if to == value_tag.VALUE_INT:
+        return create_value(value_calc_int(r))
+    if to == value_tag.VALUE_DOUBLE:
+        return create_value2(value_calc_double(r))
+    if to == value_tag.VALUE_STRING:
+        s = value_calc_string(r)
+        res = create_value_move(s)
+        return res
+    else:
+        #assert(false)
+        pass
+    return None
+
+def value_isolate(v):
+    global _g
+    if _g.dict[v]['type_'] != value_tag.VALUE_VARIABLE:
+        return
+    if _g.dict[v]['variable_'] != None:
+        tmp = _g.dict[v]['variable_']
+        if _g.dict[tmp]['type_'] == value_tag.VALUE_INT:
+            value_set(v, variable_calc_int(_g.dict[v]['variable_'], _g.dict[v]['index_']))
+        elif _g.dict[tmp]['type_'] == value_tag.VALUE_DOUBLE:
+            value_set2(v, variable_calc_double(_g.dict[v]['variable_'], _g.dict[v]['index_']))
+        elif _g.dict[tmp]['type_'] == value_tag.VALUE_STRING:
+            value_move(v, variable_calc_string(_g.dict[v]['variable_'], _g.dict[v]['index_']))
+        else:
+            #assert(false);
+            pass
+
+def value_bor(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        value_set(v, _g.dict[v]['ivalue_'] | _g.dict[t]['ivalue_'])
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        print("| operator for the floating point is not defined.") # 浮動小数点同士の|演算子は挙動が定義されていません
+        sys.exit()
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("| operator for the string is not defined.") # 文字列同士の|演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false)
+        #break
+        pass
+    destroy_value(t)
+
+def value_band(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        value_set(v, _g.dict[v]['ivalue_'] & _g.dict[t]['ivalue_'])
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        print("& operator for the floating point is not defined.") # 浮動小数点同士の&演算子は挙動が定義されていません
+        sys.exit()
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("& operator for the string is not defined."); # 文字列同士の&演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_eq(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] == _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] == _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        if _g.dict[v]['svalue_'] == _g.dict[t]['svalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_neq(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] != _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] != _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        if _g.dict[v]['svalue_'] != _g.dict[t]['svalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_gt(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] > _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] > _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("> operator for the string is not defined."); # 文字列同士の>演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_gtoe(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] >= _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] >= _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print(">= operator for the string is not defined."); # 文字列同士の>=演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_lt(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] < _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] < _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("< operator for the string is not defined."); # 文字列同士の<演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_ltoe(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        if _g.dict[v]['ivalue_'] <= _g.dict[t]['ivalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        if _g.dict[v]['dvalue_'] <= _g.dict[t]['dvalue_']:
+            value_set(v, 1)
+        else:
+            value_set(v, 0)
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("<= operator for the string is not defined."); # 文字列同士の<演算子は挙動が定義されていません
+        sys.exit()
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_add(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        _g.dict[v]['ivalue_'] += _g.dict[t]['ivalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        _g.dict[v]['dvalue_'] += _g.dict[t]['dvalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        _g.dict[v]['svalue_'] += _g.dict[t]['svalue_']
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_sub(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        _g.dict[v]['ivalue_'] -= _g.dict[t]['ivalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        _g.dict[v]['dvalue_'] -= _g.dict[t]['dvalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("- operator for the string is not defined."); # 文字列同士の*演算子は挙動が定義されていません
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_mul(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        _g.dict[v]['ivalue_'] *= _g.dict[t]['ivalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        _g.dict[v]['dvalue_'] *= _g.dict[t]['dvalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("* operator for the string is not defined."); # 文字列同士の*演算子は挙動が定義されていません
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_div(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        _g.dict[v]['ivalue_'] /= _g.dict[t]['ivalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        _g.dict[v]['dvalue_'] /= _g.dict[t]['dvalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("/ operator for the string is not defined."); # 文字列同士の/演算子は挙動が定義されていません
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+def value_mod(v, r):
+    global _g
+    t = value_convert_type(_g.dict[v]['type_'], r)
+    if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+        _g.dict[v]['ivalue_'] %= _g.dict[t]['ivalue_']
+    elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+        print("\\ operator for the double is not defined."); # double同士の\\演算子は挙動が定義されていません
+    elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+        print("\\ operator for the string is not defined."); # 文字列同士の\\演算子は挙動が定義されていません
+    else:
+        #assert(false);
+        pass
+    destroy_value(t)
+
+# スタック
+def create_value_stack():
+    res = new_value_stack_t()
+    initialize_value_stack(res)
+    return res
+
+def destroy_value_stack(st):
+    global _g
+    uninitialize_value_stack(st)
+    del _g.dict['st']
+
+def initialize_value_stack(st):
+    global _g
+    l = 16; # 初期サイズ
+    _g.dict[st]['stack_'] = [] # new_value_t()
+    _g.dict[st]['top_'] = 0
+    _g.dict[st]['max_'] = l
+
+def uninitialize_value_stack(st):
+    global _g
+    _g.dict[st] = None
+    #  stack_pop(st, _g.dict[st]['top_'])
+    #  del _g.dict[st]['stack_']
+    #  _g.dict[st]['stack_'] = None
+    #  _g.dict[st]['top_'] = 0
+    #  _g.dict[st]['max_'] = 0
+
+def stack_push(st, v):
+    global _g
+    _g.dict[st].append(v)
+    # global _g
+    # if _g.dict[st]['top_'] + 1 > _g.dict[st]['max_']:
+    #     _g.dict[st]['max_'] = _g.dict[st]['max_'] * 2; # 貪欲
+    #     _g.dict[st]['stack_'] = new_value_t()
+    # _g.dict[st]['stack_'][_g.dict[st]['top_']] = v #要修正
+    # _g.dict[st]['top_'] += 1
+
+def stack_push2(st, v):
+    global _g
+    _g.dict[st].append(v)
+    # vp = create_value5(v)
+    # stack_push(st, vp)
+
+def stack_peek(st, i):
+    global _g
+    return _g.dict[st][len(_g.dict[st])-1]
+    # idx = 0
+    # if i < 0:
+    #     idx = _g.dict[st]['top_'] + i
+    # else:
+    #     idx = i
+    # assert(idx >= 0 && idx < st->top_);
+    # return st->stack_[idx];
+
+def stack_pop(st, n):
+    global _g
+    _g.dict[st].pop()
+    # assert(n <= (size_t)st->top_);
+    # while (n-- > 0) {
+    #     --st->top_;
+    #     assert(st->stack_[st->top_] != NULL);
+    #     destroy_value(st->stack_[st->top_]);
+    #     st->stack_[st->top_] = NULL;
+
+# キーワード
+def query_keyword(s):
+    table = {
+        keyword_tag.KEYWORD_END: "end",
+        keyword_tag.KEYWORD_RETURN: "return",
+        keyword_tag.KEYWORD_GOTO: "goto",
+        keyword_tag.KEYWORD_GOSUB: "gosub",
+        keyword_tag.KEYWORD_REPEAT: "repeat",
+        keyword_tag.KEYWORD_LOOP: "loop",
+        keyword_tag.KEYWORD_CONTINUE: "continue",
+        keyword_tag.KEYWORD_BREAK: "break",
+        keyword_tag.KEYWORD_IF: "if",
+        keyword_tag.KEYWORD_ELSE: "else",
+    }
+	# 全探索
+    for key in table:
+        if string_equal_igcase(s, table[key], -1):
+            return key
+
+# システム変数
+def query_sysvar(s):
+    table = {
+        sysvar_tag.SYSVAR_CNT: "cnt",
+        sysvar_tag.SYSVAR_STAT: "stat",
+        sysvar_tag.SYSVAR_REFDVAL: "refdval",
+        sysvar_tag.SYSVAR_REFSTR: "refstr", 
+        sysvar_tag.SYSVAR_STRSIZE: "strsize",
+    }
+    # 全探索
+    for key in table:
+        if string_equal_igcase(s, table[key], -1):
+             return key
+    return -1
+
+# 実行環境
+def create_execute_environment():
+    global _g
+    res = new_execute_environment_t()
+    _g.dict[res]['parser_list_'] = create_list()
+    _g.dict[res]['ast_list_'] = create_list()
+    _g.dict[res]['statement_list_'] = create_list()
+    _g.dict[res]['label_table_'] = create_list()
+    _g.dict[res]['variable_table_'] = create_variable_table()
+    return res
 
 
 
