@@ -2175,7 +2175,51 @@ def create_execute_environment():
     _g.dict[res]['variable_table_'] = create_variable_table()
     return res
 
+def destroy_execute_environment(e):
+    global _g
 
+    # 自分でallocしたものだけ先に消す
+    tmp = _g.dict[e]['statement_list_']
+    node = _g.dict[e]['head_']
+    while node != None:
+        ast = _g.dict[node]['value_']
+        if _g.dict[ast]['flag_'] and ast_node_flag_tag.NODE_FLAG_ADDITIONAL:
+            destroy_ast_node(ast)
+        node = _g.dict[node]['next_']
+    list_free_all(_g.dict[e]['statement_list_'])
+    destroy_list(_g.dict[e]['statement_list_'])
+
+    tmp = _g.dict[e]['parser_list_']
+    node = _g.dict[tmp]['head_']
+    while node != None:
+        parser = _g.dict[node]['value_']
+        uninitialize_parse_context(parser)
+        destroy_parse_context(parser)
+        node = _g.dict[node]['next_']
+    list_free_all(_g.dict[e]['parser_list_'])
+    destroy_list(_g.dict[e]['parser_list_'])
+
+    tmp = _g.dict[e]['ast_list_']
+    node = _g.dict[tmp]['head_']
+    while node != None:
+        ast = _g.dict[node]['value_']
+        destroy_ast(ast)
+        node = _g.dict[node]['next_']
+    list_free_all(e->ast_list_)
+    destroy_list(e->ast_list_)
+
+    list_node_t* node = e->label_table_->head_;
+    while (node != NULL) {
+        label_node_t* label_node = (label_node_t*)node->value_;
+        free(label_node->name_);
+        free(label_node);
+        node->value_ = NULL;
+        node = node->next_;
+    list_free_all(e->label_table_);
+    destroy_list(e->label_table_);
+
+    destroy_variable_table(e->variable_table_);
+    free(e);
 
 print(query_keyword("goto"))
 print(_g.dict)
