@@ -2205,21 +2205,131 @@ def destroy_execute_environment(e):
         ast = _g.dict[node]['value_']
         destroy_ast(ast)
         node = _g.dict[node]['next_']
-    list_free_all(e->ast_list_)
-    destroy_list(e->ast_list_)
+    list_free_all(_g.dict[e]['ast_list_'])
+    destroy_list(_g.dict[e]['ast_list_'])
 
-    list_node_t* node = e->label_table_->head_;
-    while (node != NULL) {
-        label_node_t* label_node = (label_node_t*)node->value_;
-        free(label_node->name_);
-        free(label_node);
-        node->value_ = NULL;
-        node = node->next_;
-    list_free_all(e->label_table_);
-    destroy_list(e->label_table_);
+    tmp = _g.dict[e]['label_table_']
+    node = _g.dict[tmp]['head_']
+    while node != None:
+        label_node = _g.dict[node]['value_']
+        _g.dict[label_node]['name_'] = None
+        del _g.dict[label_node]
+        _g.dict[node]['value_'] = None
+        node = _g.dict[node]['next_']
+    list_free_all(_g.dict[e]['label_table_'])
+    destroy_list(_g.dict[e]['label_table_'])
 
-    destroy_variable_table(e->variable_table_);
-    free(e);
+    destroy_variable_table(_g.dict[e]['variable_table_'])
+    del _g.dict[e]
+
+def initialize_execute_status(s):
+    global _g
+    _g.dict[s]['stack_'] = create_value_stack()
+    _g.dict[s]['node_cur_'] = None
+    _g.dict[s]['current_call_frame_'] = 0
+    _g.dict[s]['call_frame_'][0]['caller_'] = None
+    _g.dict[s]['current_loop_frame_'] = 0
+    loop_frame = _g.dict[s]['loop_frame_']
+    _g.dict[s]['loop_frame_'][0]['counter_'] = 0
+    _g.dict[s]['loop_frame_'][0]['max_'] = 0
+    _g.dict[s]['loop_frame_'][0]['cnt_'] = 0
+    _g.dict[s]['is_end_'] = False
+    _g.dict[s]['stat_'] = 0
+    _g.dict[s]['refdval_'] = 0.0
+    _g.dict[s]['refstr_'] = create_string3("")
+    _g.dict[s]['strsize_'] = 0
+
+def uninitialize_execute_status(s):
+    global _g
+    destroy_value_stack(_g.dict[s]['stack_'])
+    destroy_string(_g.dict[s]['refstr_'])
+    _g.dict[s]['refstr_'] = None
+
+def _cl():
+    global _g
+    n = create_ast_node(node_tag.NODE_JUMP_LABEL, None, None)
+    _g.dict[n]['flag_'] |= ast_node_flag_tag.NODE_FLAG_ADDITIONAL
+    return n
+
+def _cj():
+    global _g
+    n = create_ast_node(node_tag.NODE_JUMP_INTERNAL, NULL, NULL)
+    _g.dict[n]['flag_'] |= ast_node_flag_tag.NODE_FLAG_ADDITIONAL
+    return n
+
+def _aj(tail, e):
+    global _g
+    j = _cj()
+    _g.dict[j]['ext_'] = tail
+    jumper = create_list_node()
+    _g.dict[jumper]['value_'] = j
+    list_append(_g.dict[e]['statement_list_'], jumper)
+
+def flatten(e, node):
+    global _g
+    is_add = True
+    # 前処理
+    if (node->tag_ == NODE_BLOCK_STATEMENTS) {
+        if (node->left_) {
+            flatten(e, node->left_);
+        if (node->right_) {
+            flatten(e, node->right_);
+        is_add = false;
+    else if (node->tag_ == NODE_IF) {
+        // 処理用のノードを付け足す
+        list_node_t* check_node = create_list_node();
+        ast_node_t* checker = create_ast_node(NODE_IF_CHECK, NULL, NULL);
+        checker->flag_ |= NODE_FLAG_ADDITIONAL;
+        checker->ext_ = node->left_;
+        check_node->value_ = checker;
+        list_append(e->statement_list_, check_node);
+        #
+        // 各ブロックを線形に貼りなおす
+        const ast_node_t* dispatcher = node->right_;
+        assert(dispatcher->tag_ == NODE_IF_DISPATCHER);
+        list_node_t* true_head = create_list_node();
+        true_head->value_ = _cl();
+        list_node_t* false_head = create_list_node();
+        false_head->value_ = _cl();
+        list_node_t* tail = create_list_node();
+        tail->value_ = _cl();
+        // 分岐
+        _aj(true_head, e);
+        _aj(false_head, e);
+        // 真
+        list_append(e->statement_list_, true_head);
+        flatten(e, dispatcher->left_);
+        _aj(tail, e);
+        // 偽
+        list_append(e->statement_list_, false_head);
+        if (dispatcher->right_) {
+            flatten(e, dispatcher->right_);
+            _aj(tail, e);
+        // 合流
+        list_append(e->statement_list_, tail);
+        #
+        is_add = false;
+    // 後処理
+    if (is_add) {
+        list_node_t* list_node = create_list_node();
+        list_node->value_ = node;
+        list_append(e->statement_list_, list_node);
+        if (node->tag_ == NODE_LABEL) {
+            list_node_t* label_node = create_list_node();
+            label_node_t* label = (label_node_t*)malloc(sizeof(label_node_t));
+            label->name_ = create_string3(node->token_->content_);
+            label->statement_ = list_node;
+            label_node->value_ = label;
+            list_append(e->label_table_, label_node);
+        else if (node->tag_ == NODE_REPEAT) {
+            // 処理用のノードを付け足す
+            list_node_t* check_node = create_list_node();
+            ast_node_t* checker = create_ast_node(NODE_REPEAT_CHECK, NULL, NULL);
+            checker->flag_ |= NODE_FLAG_ADDITIONAL;
+            check_node->value_ = checker;
+            list_append(e->statement_list_, check_node);
+
+
 
 print(query_keyword("goto"))
 print(_g.dict)
