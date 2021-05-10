@@ -1,6 +1,7 @@
 # coding: UTF-8
 import sys
 from enum import Enum
+import pprint
 
 # キーワード
 class keyword_tag(Enum):
@@ -478,7 +479,7 @@ def destroy_list_node(node):
 def link_next(node, list):
     global _g
     if _g.dict[node]['prev_'] != None or _g.dict[node]['next_'] != None:
-        sys.stdout.write('error')
+        sys.stdout.write('error1')
         sys.exit()
     _g.dict[node]['prev_'] = list
     _g.dict[node]['next_'] = _g.dict[list]['next_']
@@ -487,7 +488,7 @@ def link_next(node, list):
 def link_prev(node, list):
     global _g
     if _g.dict[node]['prev_'] != None or _g.dict[node]['next_'] != None:
-        sys.stdout.write('error')
+        sys.stdout.write('error2')
         sys.exit()
     _g.dict[node]['prev_'] = _g.dict[list]['prev_']
     _g.dict[node]['next_'] = list
@@ -508,7 +509,7 @@ def list_prepend(list, node):
     global _g
     if _g.dict[list]['head_'] == None:
         if _g.dict[list]['tail_'] == None:
-            sys.stdout.write('error')
+            sys.stdout.write('error3')
             sys.exit()
         _g.dict[list]['head_'] = node
         _g.dict[list]['tail_'] = node
@@ -520,8 +521,8 @@ def list_append(list, node):
     global _g
     if _g.dict[list]['tail_'] == None:
         if _g.dict[list]['head_'] == None:
-            sys.stdout.write('error')
-            sys.exit()
+            sys.stdout.write('リストのtail_とhead_がNoneです\n')
+            #sys.exit()
         _g.dict[list]['head_'] = node
         _g.dict[list]['tail_'] = node
         return
@@ -576,7 +577,7 @@ def create_string_from2(v):
 def tol(c):
 	return c.lower()
 
-def string_equal_igcase(sl, r, len):
+def string_equal_igcase(sl, r, len = None):
 	return sl == r
 
 # 値
@@ -832,9 +833,9 @@ def get_token(c):
     _g.dict[res]['cursor_end_'] = _g.dict[c]['cursor_']
     # contentが埋まってないなら埋める
     if _g.dict[res]['content_'] == None:
-        len = _g.dict[res]['cursor_end_'] - _g.dict[res]['cursor_begin_']
+        length = _g.dict[res]['cursor_end_'] - _g.dict[res]['cursor_begin_']
         index = _g.dict[res]['cursor_begin_']
-        _g.dict[res]['content_'] = _g.dict[c]['script_'][index: index+len]
+        _g.dict[res]['content_'] = _g.dict[c]['script_'][index: index+length]
     return res
 
 def destroy_token(t):
@@ -904,8 +905,8 @@ def read_token(c):
         list_append(_g.dict[c]['token_list_'], node)
         _g.dict[c]['token_current_'] = node
     if _g.dict[c]['token_current_'] != None:
-        sys.stdout.write('error')
-        sys.exit()
+        sys.stdout.write('parse_context_tのtoken_current_がNoneです\n')
+        #sys.exit()
     res = _g.dict[c]['token_current_']
     tmp = _g.dict[c]['token_current_']
     _g.dict[c]['token_current_'] = _g.dict[tmp]['next_']
@@ -921,7 +922,7 @@ def unread_token(c, num):
         num -= 1
     while num > 0:
         if _g.dict[c]['token_current_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error6')
             sys.exit()
         tmp = _g.dict[c]['token_current_']
         _g.dict[c]['token_current_'] = _g.dict[tmp]['prev_']
@@ -935,7 +936,7 @@ def prev_token(c, num):
         current = _g.dict[tmp]['tail_']
     while num > 0:
         if current != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error7')
             sys.exit()
         current = _g.dict[current]['prev_']
         num -= 1
@@ -966,7 +967,7 @@ def create_ast_node2(tag, token, left):
 def destroy_ast_node(node):
     global _g
     if node != None:
-        sys.stdout.write('error')
+        sys.stdout.write('error8')
         sys.exit()
     if _g.dict[node]['left_'] != None:
         destroy_ast_node(_g.dict[node]['left_'])
@@ -1026,8 +1027,9 @@ def parse_statement(c):
     # ここまで来て何もないなら、パース不能
     if statement == None:
         token = read_token(c)
-        print("Statement cannot be parsed.@@ %d Row", _g.dict[token]['appear_line_'])
+        sys.stdout.write("ステートメントが解析できません:" + str(_g.dict[token]['appear_line_']) + "行目")
         sys.exit()
+        # Statement cannot be parsed
         # ステートメントが解析できません@@ %d行目", token->appear_line_);
     # 最後の改行チェック
     token = read_token(c)
@@ -1503,7 +1505,7 @@ def prepare_variable(v, type, granule_size, length):
         #assert(false);
         pass
     if areasize > 0:
-        sys.stdout.write('error')
+        sys.stdout.write('error10')
         sys.exit()
     _g.dict[v]['data_'] = new_data_t()
 
@@ -1543,7 +1545,7 @@ def variable_set(table, v, name, idx):
         _g.dict[node]['value_'] = var
         list_append(table, node)
     if var != None:
-        sys.stdout.write('error')
+        sys.stdout.write('error11')
         sys.exit()
     if _g.dict[var]['type_'] != _g.dict[v]['type_']:
         if idx > 0:
@@ -1564,7 +1566,7 @@ def variable_set(table, v, name, idx):
     if init_required:
         prepare_variable(var, _g.dict[v]['type_'], granule_size, len)
     if _g.dict[var]['type_'] == _g.dict[v]['type_']:
-        sys.stdout.write('error')
+        sys.stdout.write('error12')
         sys.exit()
     data_ptr = variable_data_ptr(var, idx)
     if _g.dict[var]['type_'] == value_tag.VALUE_INT:
@@ -2287,7 +2289,7 @@ def flatten(e, node):
         # 各ブロックを線形に貼りなおす
         dispatcher = _g.dict[node]['right_']
         if _g.dict[dispatcher]['tag_'] == node_tag.NODE_IF_DISPATCHER:
-            sys.stdout.write('error')
+            sys.stdout.write('error13')
             sys.exit()
         true_head = create_list_node()
         _g.dict[true_head]['value_'] = _cl()
@@ -2351,10 +2353,14 @@ def walk(e, node):
 
 def load_script(e, script):
     global _g
+    if len(script) == 0:
+        sys.stdout.write("ERROR: スクリプトの内容が空です")
+        sys.exit()
     tokenizer = new_tokenize_context_t()
     initialize_tokenize_context(tokenizer, script)
     parser = create_parse_context()
     initialize_parse_context(parser, tokenizer)
+    # スクリプトをパースする
     ast = parse_script(parser)
     uninitialize_tokenize_context(tokenizer)
     # ASTを繋げたりラベルを持っておいたり
@@ -2392,7 +2398,7 @@ def evaluate(e, s, n):
     elif _g.dict[n]['tag_'] == node_tag.NODE_COMMAND:
         tmp = _g.dict[n]['token_']
         if _g.dict[tmp]['tag_'] == token_tag.TOKEN_IDENTIFIER:
-            sys.stdout.write('error')
+            sys.stdout.write('error14')
             sys.exit()
         tmp = _g.dict[n]['token_']
         command_name = _g.dict[tmp]['content_']
@@ -2401,7 +2407,7 @@ def evaluate(e, s, n):
             print("Command not found:%s", command_name) # コマンドが見つかりません
         delegate = get_command_delegate(command)
         if delegate != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error15')
             sys.exit()
         tmp = _g.dict[s]['stack_']
         top = _g.dict[tmp]['top_']
@@ -2412,7 +2418,7 @@ def evaluate(e, s, n):
         delegate(e, s, arg_num)
         tmp = _g.dict[s]['stack_']
         if _g.dict[tmp]['top_'] == top: # 戻り値がないことを確認
-            sys.stdout.write('error')
+            sys.stdout.write('error16')
             sys.exit()
     elif _g.dict[n]['tag_'] == node_tag.NODE_ARGUMENTS:
         if _g.dict[n]['left_'] != None:
@@ -2439,7 +2445,7 @@ def evaluate(e, s, n):
         var_name = _g.dict[tmp]['content_']
         var = search_variable(_g.dict[e]['variable_table_'], var_name)
         if var != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error17')
             sys.exit()
         idx = 0
         idx_node = _g.dict[n]['left_']
@@ -2486,12 +2492,12 @@ def evaluate(e, s, n):
             value_mod(l, r)
         else:
             if _g.dict[n]['tag_'] == False:
-                sys.stdout.write('error')
+                sys.stdout.write('error18')
                 sys.exit()
         stack_pop(_g.dict[s]['stack_'], 1)
     elif _g.dict[n]['tag_'] == node_tag.NODE_UNARY_MINUS:
         if _g.dict[n]['left_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error19')
             sys.exit()
         evaluate(e, s, _g.dict[n]['left_'])
         v = stack_peek(_g.dict[s]['stack_'], -1)
@@ -2504,7 +2510,7 @@ def evaluate(e, s, n):
             print("no minus value in the string.[%s]", _g.dict[v]['svalue_']) # 文字列に負値は存在しません
         else:
             if _g.dict[v]['type_'] == False:
-                sys.stdout.write('error')
+                sys.stdout.write('error20')
                 sys.exit()
     elif _g.dict[n]['tag_'] == node_tag.NODE_PRIMITIVE_VALUE:
         tmp = _g.dict[n]['token_']
@@ -2519,12 +2525,12 @@ def evaluate(e, s, n):
             stack_push(_g.dict[s]['stack_'], create_value3(_g.dict[tmp2]['content_']))
         else:
             if _g.dict[tmp]['tag_'] == token_tag.False:
-                sys.stdout.write('error')
+                sys.stdout.write('error21')
                 sys.exit()
     elif _g.dict[n]['tag_'] == node_tag.NODE_IDENTIFIER_EXPR:
         tmp = _g.dict[n]['token_']
         if _g.dict[tmp]['tag_'] == token_tag.TOKEN_IDENTIFIER:
-            sys.stdout.write('error')
+            sys.stdout.write('error22')
             sys.exit()
         tmp = _g.dict[n]['token_']
         ident = _g.dict[tmp]['content_']
@@ -2539,12 +2545,12 @@ def evaluate(e, s, n):
             # 関数呼び出し
             delegate = get_function_delegate(function)
             if delegate != None:
-                sys.stdout.write('error')
+                sys.stdout.write('error23')
                 sys.exit()
             delegate(e, s, arg_num)
             tmp = _g.dict[s]['stack_']
             if _g.dict[tmp]['top_'] == top + 1: # 戻り値が入っていることを確認する
-                sys.stdout.write('error')
+                sys.stdout.write('error24')
                 sys.exit()
         else:
             # システム変数
@@ -2575,7 +2581,7 @@ def evaluate(e, s, n):
                     print("Function not found, Array variable is one dimension only.@@ %s", ident) # 関数がみつかりません、配列変数の添え字は1次元までです
                 var = search_variable(_g.dict[e]['variable_table_'], ident)
                 if var != None:
-                    sys.stdout.write('error')
+                    sys.stdout.write('error25')
                     sys.exit()
                 idx = 0
                 if arg_num > 0:
@@ -2608,10 +2614,10 @@ def evaluate(e, s, n):
     elif _g.dict[n]['tag_'] == node_tag.NODE_GOTO:
         label_node = _g.dict[n]['left_']
         if label_node != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error26')
             sys.exit()
         if _g.dict[label_node]['tag_'] == node_tag.NODE_LABEL:
-            sys.stdout.write('error')
+            sys.stdout.write('error27')
             sys.exit()
         tmp = _g.dict[label_node]['token_']
         label_name = _g.dict[tmp]['content_']
@@ -2623,10 +2629,10 @@ def evaluate(e, s, n):
     elif _g.dict[n]['tag_'] == node_tag.NODE_GOSUB:
         label_node = _g.dict[n]['left_']
         if label_node != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error28')
             sys.exit()
         if _g.dict[label_node]['tag_'] == node_tag.NODE_LABEL:
-            sys.stdout.write('error')
+            sys.stdout.write('error29')
             sys.exit()
         tmp = _g.dict[label_node]['token_']
         label_name = _g.dict[tmp]['content_']
@@ -2658,7 +2664,7 @@ def evaluate(e, s, n):
         _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_'] = loop_num
     elif _g.dict[n]['tag_'] == node_tag.NODE_REPEAT_CHECK:
         if _g.dict[s]['current_loop_frame_'] > 0:
-            sys.stdout.write('error')
+            sys.stdout.write('error30')
             sys.exit()
         if _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_'] >= 0 and _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['counter_'] >= _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_']:
             depth = 0
@@ -2674,7 +2680,7 @@ def evaluate(e, s, n):
                 tmp = _g.dict[s]['node_cur_']
                 _g.dict[s]['node_cur_'] = _g.dict[tmp]['next_']
             if _g.dict[s]['node_cur_'] != None:
-                sys.stdout.write('error')
+                sys.stdout.write('error31')
                 sys.exit()
             _g.dict[s]['current_loop_frame_'] -= 1
     elif _g.dict[n]['tag_'] == node_tag.NODE_LOOP or _g.dict[n]['tag_'] == node_tag.NODE_CONTINUE:
@@ -2705,15 +2711,15 @@ def evaluate(e, s, n):
         _g.dict[s]['current_loop_frame_'] -= 1
     elif _g.dict[n]['tag_'] == node_tag.NODE_IF:
         if _g.dict[n]['left_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error32')
             sys.exit()
         evaluate(e, s, _g.dict[n]['left_'])
         if _g.dict[n]['right_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error33')
             sys.exit()
         dispatcher = _g.dict[n]['right_']
         if _g.dict[dispatcher]['tag_'] == node_tag.NODE_IF_DISPATCHER:
-            sys.stdout.write('error')
+            sys.stdout.write('error34')
             sys.exit()
         cond = stack_peek(_g.dict[s]['stack_'], -1)
         is_cond = value_calc_boolean(cond)
@@ -2728,7 +2734,7 @@ def evaluate(e, s, n):
         pass
     elif _g.dict[n]['tag_'] == node_tag.NODE_IF_CHECK:
         if _g.dict[n]['ext_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error35')
             sys.exit()
         c = _g.dict[n]['ext_']
         evaluate(e, s, c)
@@ -2742,7 +2748,7 @@ def evaluate(e, s, n):
         pass
     elif _g.dict[n]['tag_'] == node_tag.NODE_JUMP_INTERNAL:
         if _g.dict[n]['ext_'] != None:
-            sys.stdout.write('error')
+            sys.stdout.write('error36')
             sys.exit()
         _g.dict[s]['node_cur_'] = _g.dict[n]['ext_']
     else:
@@ -2765,7 +2771,7 @@ def execute(e):
         evaluate(e, s, ex)
         tmp = _g.dict[s]['stack_']
         if top == _g.dict[tmp]['top_']:
-            sys.stdout.write('error')
+            sys.stdout.write('error37')
             sys.exit()
         if _g.dict[s]['is_end_']: # もう実行終わったらしい、帰る
             break
@@ -2822,22 +2828,21 @@ def get_function_delegate(function):
 def main():
     args = sys.argv
     filename = None
-    show_ast = False
     if len(args) >= 2:
         filename = args[1]
     else:
         filename = "start.hsp"
-    script_size = 0
     script = None
-    file = open(filename, 'r', encoding='UTF-8')
+    file = open(filename, 'r')
     if file == None:
-        print("ERROR : cannot read such file %s\n", filename) # ファイルの読み込みに失敗しました
+        print("ERROR: スクリプトファイルの読み込みに失敗しました %s\n", filename) #cannot read such file
         return -1
     script = file.read()
     file.close()
-    if script != None:
-        sys.stdout.write('error')
+    if script == None:
+        sys.stdout.write('ERROR: スクリプトファイルを正常に読み込めませんでした')
         sys.exit()
+    script += '\0'
     # 実行
     env = create_execute_environment()
     load_script(env, script)
@@ -2848,7 +2853,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-print(query_keyword("goto"))
-print(_g.dict)
-print(command_delegate)
