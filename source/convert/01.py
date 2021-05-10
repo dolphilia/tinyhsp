@@ -2253,7 +2253,7 @@ def _cl():
 
 def _cj():
     global _g
-    n = create_ast_node(node_tag.NODE_JUMP_INTERNAL, NULL, NULL)
+    n = create_ast_node(node_tag.NODE_JUMP_INTERNAL, None, None)
     _g.dict[n]['flag_'] |= ast_node_flag_tag.NODE_FLAG_ADDITIONAL
     return n
 
@@ -2269,67 +2269,585 @@ def flatten(e, node):
     global _g
     is_add = True
     # 前処理
-    if (node->tag_ == NODE_BLOCK_STATEMENTS) {
-        if (node->left_) {
-            flatten(e, node->left_);
-        if (node->right_) {
-            flatten(e, node->right_);
-        is_add = false;
-    else if (node->tag_ == NODE_IF) {
-        // 処理用のノードを付け足す
-        list_node_t* check_node = create_list_node();
-        ast_node_t* checker = create_ast_node(NODE_IF_CHECK, NULL, NULL);
-        checker->flag_ |= NODE_FLAG_ADDITIONAL;
-        checker->ext_ = node->left_;
-        check_node->value_ = checker;
-        list_append(e->statement_list_, check_node);
+    if _g.dict[node]['tag_'] == node_tag.NODE_BLOCK_STATEMENTS:
+        if _g.dict[node]['left_']:
+            flatten(e, _g.dict[node]['left_'])
+        if _g.dict[node]['right_']:
+            flatten(e, _g.dict[node]['right_'])
+        is_add = False
+    elif _g.dict[node]['tag_'] == node_tag.NODE_IF:
+        # 処理用のノードを付け足す
+        check_node = create_list_node()
+        checker = create_ast_node(node_tag.NODE_IF_CHECK, None, None)
+        _g.dict[checker]['flag_'] |= ast_node_flag_tag.NODE_FLAG_ADDITIONAL
+        _g.dict[checker]['ext_'] = _g.dict[node]['left_']
+        _g.dict[check_node]['value_'] = checker
+        list_append(_g.dict[e]['statement_list_'], check_node)
         #
-        // 各ブロックを線形に貼りなおす
-        const ast_node_t* dispatcher = node->right_;
-        assert(dispatcher->tag_ == NODE_IF_DISPATCHER);
-        list_node_t* true_head = create_list_node();
-        true_head->value_ = _cl();
-        list_node_t* false_head = create_list_node();
-        false_head->value_ = _cl();
-        list_node_t* tail = create_list_node();
-        tail->value_ = _cl();
-        // 分岐
-        _aj(true_head, e);
-        _aj(false_head, e);
-        // 真
-        list_append(e->statement_list_, true_head);
-        flatten(e, dispatcher->left_);
-        _aj(tail, e);
-        // 偽
-        list_append(e->statement_list_, false_head);
-        if (dispatcher->right_) {
-            flatten(e, dispatcher->right_);
-            _aj(tail, e);
-        // 合流
-        list_append(e->statement_list_, tail);
+        # 各ブロックを線形に貼りなおす
+        dispatcher = _g.dict[node]['right_']
+        if _g.dict[dispatcher]['tag_'] == node_tag.NODE_IF_DISPATCHER:
+            sys.stdout.write('error')
+            sys.exit()
+        true_head = create_list_node()
+        _g.dict[true_head]['value_'] = _cl()
+        false_head = create_list_node()
+        _g.dict[false_head]['value_'] = _cl()
+        tail = create_list_node()
+        _g.dict[tail]['value_'] = _cl()
+        # 分岐
+        _aj(true_head, e)
+        _aj(false_head, e)
+        # 真
+        list_append(_g.dict[e]['statement_list_'], true_head)
+        flatten(e, _g.dict[dispatcher]['left_'])
+        _aj(tail, e)
+        # 偽
+        list_append(_g.dict[e]['statement_list_'], false_head)
+        if _g.dict[dispatcher]['right_']:
+            flatten(e, _g.dict[dispatcher]['right_'])
+            _aj(tail, e)
+        # 合流
+        list_append(_g.dict[e]['statement_list_'], tail)
         #
-        is_add = false;
-    // 後処理
-    if (is_add) {
-        list_node_t* list_node = create_list_node();
-        list_node->value_ = node;
-        list_append(e->statement_list_, list_node);
-        if (node->tag_ == NODE_LABEL) {
-            list_node_t* label_node = create_list_node();
-            label_node_t* label = (label_node_t*)malloc(sizeof(label_node_t));
-            label->name_ = create_string3(node->token_->content_);
-            label->statement_ = list_node;
-            label_node->value_ = label;
-            list_append(e->label_table_, label_node);
-        else if (node->tag_ == NODE_REPEAT) {
-            // 処理用のノードを付け足す
-            list_node_t* check_node = create_list_node();
-            ast_node_t* checker = create_ast_node(NODE_REPEAT_CHECK, NULL, NULL);
-            checker->flag_ |= NODE_FLAG_ADDITIONAL;
-            check_node->value_ = checker;
-            list_append(e->statement_list_, check_node);
+        is_add = False
+    # 後処理
+    if is_add:
+        list_node = create_list_node()
+        _g.dict[list_node]['value_'] = node
+        list_append(_g.dict[e]['statement_list_'], list_node)
+        if _g.dict[node]['tag_'] == node_tag.NODE_LABEL:
+            label_node = create_list_node()
+            label = new_label_node_t()
+            tmp = _g.dict[node]['token_']
+            _g.dict[label]['name_'] = create_string3(_g.dict[tmp]['content_'])
+            _g.dict[label]['statement_'] = list_node
+            _g.dict[label_node]['value_'] = label
+            list_append(_g.dict[e]['label_table_'], label_node)
+        elif _g.dict[node]['tag_'] == node_tag.NODE_REPEAT:
+            # 処理用のノードを付け足す
+            check_node = create_list_node()
+            checker = create_ast_node(node_tag.NODE_REPEAT_CHECK, None, None)
+            _g.dict[checker]['flag_'] |= ast_node_flag_tag.NODE_FLAG_ADDITIONAL
+            _g.dict[check_node]['value_'] = checker
+            list_append(_g.dict[e]['statement_list_'], check_node)
+
+def walk(e, node):
+    global _g
+    if _g.dict[node]['tag_'] == node_tag.NODE_VARIABLE or _g.dict[node]['tag_'] == node_tag.NODE_IDENTIFIER_EXPR: # 変数配列の可能性あり
+        tmp = _g.dict[node]['token_']
+        var_name = _g.dict[tmp]['content_'];
+        if search_variable(_g.dict[e]['variable_table_'], var_name) == None:
+            # 適当な変数として初期化しておく
+            v = new_value_t()
+            _g.dict[v]['variable_'] = new_variable_t()
+            _g.dict[v]['type_'] = value_tag.VALUE_INT
+            _g.dict[v]['ivalue_'] = 0
+            variable_set(_g.dict[e]['variable_table_'], v, var_name, 0)
+    if _g.dict[node]['left_'] != None:
+        walk(e, _g.dict[node]['left_'])
+    if _g.dict[node]['right_'] != None:
+        walk(e, _g.dict[node]['right_'])
+
+def load_script(e, script):
+    global _g
+    tokenizer = new_tokenize_context_t()
+    initialize_tokenize_context(tokenizer, script)
+    parser = create_parse_context()
+    initialize_parse_context(parser, tokenizer)
+    ast = parse_script(parser)
+    uninitialize_tokenize_context(tokenizer)
+    # ASTを繋げたりラベルを持っておいたり
+    st = _g.dict[ast]['head_']
+    while st != None:
+        node = _g.dict[st]['value_']
+        flatten(e, node)
+        st = _g.dict[st]['next_']
+    # 特定の部分木マッチング
+    st = _g.dict[ast]['head_']
+    while st != None:
+        node = _g.dict[st]['value_']
+        walk(e, node)
+        st = _g.dict[st]['next_']
+    # パーサーとASTを保存しておく
+    parser_node = create_list_node()
+    _g.dict[parser_node]['value_'] = parser
+    list_append(_g.dict[e]['parser_list_'], parser_node)
+
+    ast_node = create_list_node()
+    _g.dict[ast_node]['value_'] = ast
+    list_append(_g.dict[e]['ast_list_'], ast_node)
+
+def evaluate(e, s, n):
+    global _g
+    if _g.dict[s]['is_end_']: # もう実行おわってる
+        return
+    if _g.dict[n]['tag_'] == node_tag.NODE_EMPTY or node_tag.NODE_LABEL:
+        pass
+    elif _g.dict[n]['tag_'] == node_tag.NODE_BLOCK_STATEMENTS:
+        if _g.dict[n]['left_']:
+            evaluate(e, s, _g.dict[n]['left_'])
+        if _g.dict[n]['right_']:
+            evaluate(e, s, _g.dict[n]['right_'])
+    elif _g.dict[n]['tag_'] == node_tag.NODE_COMMAND:
+        tmp = _g.dict[n]['token_']
+        if _g.dict[tmp]['tag_'] == token_tag.TOKEN_IDENTIFIER:
+            sys.stdout.write('error')
+            sys.exit()
+        tmp = _g.dict[n]['token_']
+        command_name = _g.dict[tmp]['content_']
+        command = query_command(command_name)
+        if command == -1:
+            print("Command not found:%s", command_name) # コマンドが見つかりません
+        delegate = get_command_delegate(command)
+        if delegate != None:
+            sys.stdout.write('error')
+            sys.exit()
+        tmp = _g.dict[s]['stack_']
+        top = _g.dict[tmp]['top_']
+        if _g.dict[n]['left_'] != None:
+            evaluate(e, s, _g.dict[n]['left_'])
+        tmp = _g.dict[s]['stack_']
+        arg_num = _g.dict[tmp]['top_'] - top
+        delegate(e, s, arg_num)
+        tmp = _g.dict[s]['stack_']
+        if _g.dict[tmp]['top_'] == top: # 戻り値がないことを確認
+            sys.stdout.write('error')
+            sys.exit()
+    elif _g.dict[n]['tag_'] == node_tag.NODE_ARGUMENTS:
+        if _g.dict[n]['left_'] != None:
+            evaluate(e, s, _g.dict[n]['left_'])
+        if _g.dict[n]['right_'] != None:
+            evaluate(e, s, _g.dict[n]['right_'])
+    elif _g.dict[n]['tag_'] == node_tag.NODE_ASSIGN:
+        evaluate(e, s, _g.dict[n]['left_'])
+        evaluate(e, s, _g.dict[n]['right_'])
+        var = stack_peek(_g.dict[s]['stack_'], -2)
+        if _g.dict[var]['type_'] != value_tag.VALUE_VARIABLE:
+            print("Substitution: Please specify a variable.") # 変数代入：代入先が変数ではありませんでした
+        v = stack_peek(_g.dict[s]['stack_'], -1)
+
+        value_isolate(v)
+        if _g.dict[var]['variable_'] == None:
+            variable_set(_g.dict[e]['variable_table_'], v, None, _g.dict[var]['index_']) # var->variable_->name_, var->index_);
+        else:
+            tmp = _g.dict[var]['variable_']
+            variable_set(_g.dict[e]['variable_table_'], v, _g.dict[tmp]['name_'], _g.dict[var]['index_'])
+        stack_pop(_g.dict[s]['stack_'], 2)
+    elif _g.dict[n]['tag_'] == node_tag.NODE_VARIABLE:
+        tmp = _g.dict[n]['token_']
+        var_name = _g.dict[tmp]['content_']
+        var = search_variable(_g.dict[e]['variable_table_'], var_name)
+        if var != None:
+            sys.stdout.write('error')
+            sys.exit()
+        idx = 0
+        idx_node = _g.dict[n]['left_']
+        if idx_node:
+            evaluate(e, s, idx_node)
+            i = stack_peek(_g.dict[s]['stack_'], -1)
+            idx = value_calc_int(i)
+            stack_pop(_g.dict[s]['stack_'], 1)
+        v = create_value4(var, idx)
+        stack_push(_g.dict[s]['stack_'], v)
+    elif _g.dict[n]['tag_'] == node_tag.NODE_EXPRESSION:
+        evaluate(e, s, _g.dict[n]['left_'])
+    elif _g.dict[n]['tag_'] == node_tag.NODE_BOR or _g.dict[n]['tag_'] == node_tag.NODE_BAND or _g.dict[n]['tag_'] == node_tag.NODE_EQ or _g.dict[n]['tag_'] == node_tag.NODE_NEQ or _g.dict[n]['tag_'] == node_tag.NODE_GT or _g.dict[n]['tag_'] == node_tag.NODE_GTOE or _g.dict[n]['tag_'] == node_tag.NODE_LT or _g.dict[n]['tag_'] == node_tag.NODE_LTOE or _g.dict[n]['tag_'] == node_tag.NODE_ADD or _g.dict[n]['tag_'] == node_tag.NODE_SUB or _g.dict[n]['tag_'] == node_tag.NODE_MUL or _g.dict[n]['tag_'] == node_tag.NODE_DIV or _g.dict[n]['tag_'] == node_tag.NODE_MOD:
+        evaluate(e, s, _g.dict[n]['left_'])
+        evaluate(e, s, _g.dict[n]['right_'])
+        l = stack_peek(_g.dict[s]['stack_'], -2)
+        r = stack_peek(_g.dict[s]['stack_'], -1)
+        value_isolate(l)
+        if _g.dict[n]['tag_'] == node_tag.NODE_BOR:
+            value_bor(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_BAND:
+            value_band(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_EQ:
+            value_eq(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_NEQ:
+            value_neq(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_GT:
+            value_gt(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_GTOE:
+            value_gtoe(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_LT:
+            value_lt(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_LTOE:
+            value_ltoe(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_ADD:
+            value_add(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_SUB:
+            value_sub(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_MUL:
+            value_mul(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_DIV:
+            value_div(l, r)
+        elif _g.dict[n]['tag_'] == node_tag.NODE_MOD:
+            value_mod(l, r)
+        else:
+            if _g.dict[n]['tag_'] == False:
+                sys.stdout.write('error')
+                sys.exit()
+        stack_pop(_g.dict[s]['stack_'], 1)
+    elif _g.dict[n]['tag_'] == node_tag.NODE_UNARY_MINUS:
+        if _g.dict[n]['left_'] != None:
+            sys.stdout.write('error')
+            sys.exit()
+        evaluate(e, s, _g.dict[n]['left_'])
+        v = stack_peek(_g.dict[s]['stack_'], -1)
+        value_isolate(v)
+        if _g.dict[v]['type_'] == value_tag.VALUE_INT:
+            _g.dict[v]['ivalue_'] = 0 - _g.dict[v]['ivalue_']
+        elif _g.dict[v]['type_'] == value_tag.VALUE_DOUBLE:
+            _g.dict[v]['dvalue_'] = 0.0 - _g.dict[v]['dvalue_']
+        elif _g.dict[v]['type_'] == value_tag.VALUE_STRING:
+            print("no minus value in the string.[%s]", _g.dict[v]['svalue_']) # 文字列に負値は存在しません
+        else:
+            if _g.dict[v]['type_'] == False:
+                sys.stdout.write('error')
+                sys.exit()
+    elif _g.dict[n]['tag_'] == node_tag.NODE_PRIMITIVE_VALUE:
+        tmp = _g.dict[n]['token_']
+        if _g.dict[tmp]['tag_'] == token_tag.TOKEN_INTEGER:
+            tmp2 = _g.dict[n]['token_']
+            stack_push(_g.dict[s]['stack_'], create_value(int(_g.dict[tmp2]['content_'])))
+        elif _g.dict[tmp]['tag_'] == token_tag.TOKEN_REAL:
+            tmp2 = _g.dict[n]['token_']
+            stack_push(_g.dict[s]['stack_'], create_value2(float(_g.dict[tmp2]['content_'])))
+        elif _g.dict[tmp]['tag_'] == token_tag.TOKEN_STRING:
+            tmp2 = _g.dict[n]['token_']
+            stack_push(_g.dict[s]['stack_'], create_value3(_g.dict[tmp2]['content_']))
+        else:
+            if _g.dict[tmp]['tag_'] == token_tag.False:
+                sys.stdout.write('error')
+                sys.exit()
+    elif _g.dict[n]['tag_'] == node_tag.NODE_IDENTIFIER_EXPR:
+        tmp = _g.dict[n]['token_']
+        if _g.dict[tmp]['tag_'] == token_tag.TOKEN_IDENTIFIER:
+            sys.stdout.write('error')
+            sys.exit()
+        tmp = _g.dict[n]['token_']
+        ident = _g.dict[tmp]['content_']
+        tmp = _g.dict[s]['stack_']
+        top = _g.top_
+        if _g.dict[n]['left_'] != None:
+            evaluate(e, s, _g.dict[n]['left_'])
+        tmp = _g.dict[s]['stack_']
+        arg_num = _g.dict[tmp]['top_'] - top
+        function = query_function(ident)
+        if function >= 0:
+            # 関数呼び出し
+            delegate = get_function_delegate(function)
+            if delegate != None:
+                sys.stdout.write('error')
+                sys.exit()
+            delegate(e, s, arg_num)
+            tmp = _g.dict[s]['stack_']
+            if _g.dict[tmp]['top_'] == top + 1: # 戻り値が入っていることを確認する
+                sys.stdout.write('error')
+                sys.exit()
+        else:
+            # システム変数
+            sysvar = query_sysvar(ident)
+            if sysvar >= 0:
+                if arg_num > 0:
+                    print("cannot arrays in the system variable.", ident) # システム変数に添え字はありません
+                # 後々のことも考えて、一応
+                stack_pop(_g.dict[s]['stack_'], arg_num)
+                if sysvar == sysvar_tag.SYSVAR_CNT:
+                    if _g.dict[s]['current_loop_frame_'] <= 0:
+                        print("System variable(cnt): cannot refer outside the repeat-loop.") # システム変数cnt：repeat-loop中でないのに参照しました
+                    stack_push(_g.dict[s]['stack_'], create_value(_g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1].cnt_))
+                elif sysvar == sysvar_tag.SYSVAR_STAT:
+                    stack_push(_g.dict[s]['stack_'], create_value(_g.dict[s]['stat_']))
+                elif sysvar == sysvar_tag.SYSVAR_REFDVAL:
+                    stack_push(_g.dict[s]['stack_'], create_value2(_g.dict[s]['refdval_']))
+                elif sysvar == sysvar_tag.SYSVAR_REFSTR:
+                    stack_push(_g.dict[s]['stack_'], create_value3(_g.dict[s]['refstr_']))
+                elif sysvar == sysvar_tag.SYSVAR_STRSIZE:
+                    stack_push(_g.dict[s]['stack_'], create_value(_g.dict[s]['strsize_']))
+                else:
+                    # assert(false)
+                    stack_push(_g.dict[s]['stack_'], create_value(0))
+            else:
+                # 配列変数
+                if arg_num > 1:
+                    print("Function not found, Array variable is one dimension only.@@ %s", ident) # 関数がみつかりません、配列変数の添え字は1次元までです
+                var = search_variable(_g.dict[e]['variable_table_'], ident)
+                if var != None:
+                    sys.stdout.write('error')
+                    sys.exit()
+                idx = 0
+                if arg_num > 0:
+                    i = stack_peek(_g.dict[s]['stack_'], -1)
+                    idx = value_calc_int(i)
+                v = create_value4(var, idx)
+                stack_pop(_g.dict[s]['stack_'], arg_num)
+                stack_push(_g.dict[s]['stack_'], v)
+    elif _g.dict[n]['tag_'] == node_tag.NODE_END:
+        _g.dict[s]['is_end_'] = True
+    elif _g.dict[n]['tag_'] == node_tag.NODE_RETURN:
+        if _g.dict[s]['current_call_frame_'] <= 0:
+            print("Return from outside the subroutine is invalid.") # サブルーチン外からのreturnは無効です
+        if _g.dict[n]['left_']:
+            evaluate(e, s, _g.dict[n]['left_'])
+            res = stack_peek(_g.dict[s]['stack_'], -1)
+            if value_get_primitive_tag(res) == value_tag.VALUE_INT:
+                _g.dict[s]['stat_'] = value_calc_int(res)
+            elif value_get_primitive_tag(res) == value_tag.VALUE_DOUBLE:
+                _g.dict[s]['refdval_'] = value_calc_double(res)
+            elif value_get_primitive_tag(res) == value_tag.VALUE_STRING:
+                destroy_string(_g.dict[s]['refstr_'])
+                _g.dict[s]['refstr_'] = value_calc_string(res)
+            else:
+                #assert(false);
+                pass
+            stack_pop(_g.dict[s]['stack_'], 1)
+        _g.dict[s]['current_call_frame_'] -= 1
+        _g.dict[s]['node_cur_'] = _g.dict[s]['call_frame_'][_g.dict[s]['current_call_frame_']]['caller_']
+    elif _g.dict[n]['tag_'] == node_tag.NODE_GOTO:
+        label_node = _g.dict[n]['left_']
+        if label_node != None:
+            sys.stdout.write('error')
+            sys.exit()
+        if _g.dict[label_node]['tag_'] == node_tag.NODE_LABEL:
+            sys.stdout.write('error')
+            sys.exit()
+        tmp = _g.dict[label_node]['token_']
+        label_name = _g.dict[tmp]['content_']
+        label = search_label(e, label_name)
+        if label == None:
+            print("goto: Label not found.@@ %s", label_name) # goto：ラベルがみつかりません
+            sys.exit()
+        _g.dict[s]['node_cur_'] = label
+    elif _g.dict[n]['tag_'] == node_tag.NODE_GOSUB:
+        label_node = _g.dict[n]['left_']
+        if label_node != None:
+            sys.stdout.write('error')
+            sys.exit()
+        if _g.dict[label_node]['tag_'] == node_tag.NODE_LABEL:
+            sys.stdout.write('error')
+            sys.exit()
+        tmp = _g.dict[label_node]['token_']
+        label_name = _g.dict[tmp]['content_']
+        label = search_label(e, label_name)
+        if label == None:
+            print("gosub: Label not found.@@ %s", label_name) # gosub：ラベルがみつかりません
+            sys.exit()
+        if (_g.dict[s]['current_call_frame_'] + 1) >= MAX_CALL_FRAME:
+            print("gosub: Nesting is too deep.") # gosub：ネストが深すぎます
+            sys.exit()
+        _g.dict[s]['current_call_frame_'] += 1
+        _g.dict[s]['call_frame_'][_g.dict[s]['current_call_frame_'] - 1]['caller_'] = _g.dict[s]['node_cur_']
+        _g.dict[s]['node_cur_'] = label
+    elif _g.dict[n]['tag_'] == node_tag.NODE_REPEAT:
+        if _g.dict[s]['current_loop_frame_'] + 1 >= MAX_LOOP_FRAME:
+            print("repeat: Nesting is too deep.") # repeat：ネストが深すぎます
+            sys.exit()
+        _g.dict[s]['current_loop_frame_'] += 1
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['start_'] = _g.dict[s]['node_cur_']
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['cnt_'] = 0
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['counter_'] = 0
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_'] = 0
+        loop_num = -1
+        if _g.dict[n]['left_']:
+            evaluate(e, s, _g.dict[n]['left_'])
+            v = stack_peek(_g.dict[s]['stack_'], -1)
+            loop_num = value_calc_int(v)
+            stack_pop(_g.dict[s]['stack_'], 1)
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_'] = loop_num
+    elif _g.dict[n]['tag_'] == node_tag.NODE_REPEAT_CHECK:
+        if _g.dict[s]['current_loop_frame_'] > 0:
+            sys.stdout.write('error')
+            sys.exit()
+        if _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_'] >= 0 and _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['counter_'] >= _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['max_']:
+            depth = 0
+            while _g.dict[s]['node_cur_'] != None:
+                tmp = _g.dict[s]['node_cur_']
+                ex = _g.dict[tmp]['value_']
+                if _g.dict[ex]['tag_'] == node_tag.NODE_REPEAT:
+                    depth += 1
+                elif _g.dict[ex]['tag_'] == node_tag.NODE_LOOP:
+                    if depth == 0:
+                        depth -= 1
+                        break
+                tmp = _g.dict[s]['node_cur_']
+                _g.dict[s]['node_cur_'] = _g.dict[tmp]['next_']
+            if _g.dict[s]['node_cur_'] != None:
+                sys.stdout.write('error')
+                sys.exit()
+            _g.dict[s]['current_loop_frame_'] -= 1
+    elif _g.dict[n]['tag_'] == node_tag.NODE_LOOP or _g.dict[n]['tag_'] == node_tag.NODE_CONTINUE:
+        if _g.dict[s]['current_loop_frame_'] <= 0:
+            print("loop,continue: is not in repeat-loop.") # loop,continue：repeat-loopの中にありません
+            sys.exit()
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['counter_'] += 1
+        _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['cnt_'] += 1
+        _g.dict[s]['node_cur_'] = _g.dict[s]['loop_frame_'][_g.dict[s]['current_loop_frame_'] - 1]['start_']
+    elif _g.dict[n]['tag_'] == node_tag.NODE_BREAK:
+        if _g.dict[s]['current_loop_frame_'] <= 0:
+            print("break: is not in repeat-loop.") # break：repeat-loopの中にありません
+        depth = 0
+        while _g.dict[s]['node_cur_'] != None:
+            tmp = _g.dict[s]['node_cur_']
+            ex = _g.dict[tmp]['value_']
+            if _g.dict[ex]['tag_'] == node_tag.NODE_REPEAT:
+                depth -= 1
+            elif _g.dict[ex]['tag_'] == node_tag.NODE_LOOP:
+                if depth == 0:
+                    depth -= 1
+                    break
+            tmp = _g.dict[s]['node_cur_']
+            _g.dict[s]['node_cur_'] = _g.dict[tmp]['next_']
+        if _g.dict[s]['node_cur_'] == None:
+            print("break: couldn't repeat-loop in goto, and break."); # break：repeat-loopをうまく抜けられませんでした、repeat-loop間でのgoto後にbreakなどはできません
+            sys.exit()
+        _g.dict[s]['current_loop_frame_'] -= 1
+    elif _g.dict[n]['tag_'] == node_tag.NODE_IF:
+        if _g.dict[n]['left_'] != None:
+            sys.stdout.write('error')
+            sys.exit()
+        evaluate(e, s, _g.dict[n]['left_'])
+        if _g.dict[n]['right_'] != None:
+            sys.stdout.write('error')
+            sys.exit()
+        dispatcher = _g.dict[n]['right_']
+        if _g.dict[dispatcher]['tag_'] == node_tag.NODE_IF_DISPATCHER:
+            sys.stdout.write('error')
+            sys.exit()
+        cond = stack_peek(_g.dict[s]['stack_'], -1)
+        is_cond = value_calc_boolean(cond)
+        stack_pop(_g.dict[s]['stack_'], 1)
+        if is_cond:
+            evaluate(e, s, _g.dict[dispatcher]['left_'])
+        else:
+            if _g.dict[dispatcher]['right_']:
+                evaluate(e, s, _g.dict[dispatcher]['right_'])
+    elif _g.dict[n]['tag_'] == node_tag.NODE_IF_DISPATCHER:
+        #assert(false);
+        pass
+    elif _g.dict[n]['tag_'] == node_tag.NODE_IF_CHECK:
+        if _g.dict[n]['ext_'] != None:
+            sys.stdout.write('error')
+            sys.exit()
+        c = _g.dict[n]['ext_']
+        evaluate(e, s, c)
+        cond = stack_peek(_g.dict[s]['stack_'], -1)
+        is_cond = value_calc_boolean(cond)
+        stack_pop(_g.dict[s]['stack_'], 1)
+        if not is_cond:
+            tmp = _g.dict[s]['node_cur_']
+            _g.dict[s]['node_cur_'] = _g.dict[tmp]['next_']
+    elif _g.dict[n]['tag_'] == node_tag.NODE_JUMP_LABEL:
+        pass
+    elif _g.dict[n]['tag_'] == node_tag.NODE_JUMP_INTERNAL:
+        if _g.dict[n]['ext_'] != None:
+            sys.stdout.write('error')
+            sys.exit()
+        _g.dict[s]['node_cur_'] = _g.dict[n]['ext_']
+    else:
+        #assert(false)
+        pass
+    return
+
+def execute(e):
+    global _g
+    s = new_execute_status_t()
+    initialize_execute_status(s)
+    tmp = _g.dict[e]['statement_list_']
+    s.node_cur_ = _g.dict[tmp]['head_']
+    if _g.dict[s]['node_cur_'] == None:
+        print("No executable node.@@ [%p]", e) # 実行できるノードがありません
+    while True:
+        ex = _g.dict[s]['node_cur_']['value_']
+        tmp = _g.dict[s]['stack_']
+        top = _g.dict[tmp]['top_']
+        evaluate(e, s, ex)
+        tmp = _g.dict[s]['stack_']
+        if top == _g.dict[tmp]['top_']:
+            sys.stdout.write('error')
+            sys.exit()
+        if _g.dict[s]['is_end_']: # もう実行終わったらしい、帰る
+            break
+        tmp = _g.dict[s]['node_cur_']
+        _g.dict[s]['node_cur_'] = _g.dict[tmp]['next_']
+        if _g.dict[s]['node_cur_'] == None: # もう実行できるastがない、帰る
+            break
+    uninitialize_execute_status(s)
+
+# ビルトイン
+def query_command(s):
+    table = {
+        builtin_command_tag.COMMAND_DEVTERM: "devterm",
+        builtin_command_tag.COMMAND_DIM: "dim",
+        builtin_command_tag.COMMAND_DDIM: "ddim",
+        builtin_command_tag.COMMAND_SDIM: "sdim",
+        builtin_command_tag.COMMAND_RANDOMIZE: "randomize",
+        builtin_command_tag.COMMAND_BLOAD: "bload",
+        builtin_command_tag.COMMAND_POKE: "poke",
+        builtin_command_tag.COMMAND_INPUT: "input",
+        builtin_command_tag.COMMAND_MES: "mes",
+    }
+	# 全探索
+    for key in table:
+        if string_equal_igcase(s, table[key], -1):
+            return key
+    return -1
+
+def get_command_delegate(command):
+    global command_delegate
+    return command_delegate[command]
+
+def query_function(s):
+    table = {
+        builtin_function_tag.FUNCTION_INT: "int",
+        builtin_function_tag.FUNCTION_DOUBLE: "double",
+        builtin_function_tag.FUNCTION_STR: "str",
+        builtin_function_tag.FUNCTION_RND: "rnd",
+        builtin_function_tag.FUNCTION_ABS: "abs",
+        builtin_function_tag.FUNCTION_POWF: "powf",
+        builtin_function_tag.FUNCTION_PEEK: "peek",
+    }
+    # 全探索
+    for key in table:
+        if string_equal_igcase(s, table[key], -1):
+            return key
+    return -1
+
+def get_function_delegate(function):
+    global function_delegate
+    return function_delegate[function]
 
 
+def main():
+    args = sys.argv
+    filename = None
+    show_ast = False
+    if len(args) >= 2:
+        filename = args[1]
+    else:
+        filename = "start.hsp"
+    script_size = 0
+    script = None
+    file = open(filename, 'r', encoding='UTF-8')
+    if file == None:
+        print("ERROR : cannot read such file %s\n", filename) # ファイルの読み込みに失敗しました
+        return -1
+    script = file.read()
+    file.close()
+    if script != None:
+        sys.stdout.write('error')
+        sys.exit()
+    # 実行
+    env = create_execute_environment()
+    load_script(env, script)
+    execute(env)
+    destroy_execute_environment(env)
+    # 各種解放
+    del script
+
+if __name__ == "__main__":
+    main()
 
 print(query_keyword("goto"))
 print(_g.dict)
