@@ -4,6 +4,7 @@ TinyHSPは**最軽量のHSPを作成する**ことを目標にしたプロジェ
 
 ## 更新履歴
 
+- 2021-12-30 ＜M1 Mac＞動作を確認。Homebrewインストール説明の追記。EXTバージョンでの不具合あり。
 - 2018-08-09 リポジトリを新しいアカウントに移動
 - 2017-11-04 README.mdを更新
 - 2017-07-08 README.mdを更新。デフォルトの解像度を640x480に戻す
@@ -187,6 +188,12 @@ macOSにGLFW3を導入する手順は以下のとおりです。
 
 1. Homebrewを導入します。（[Homebrew](http://brew.sh/index_ja.html)のウェブサイトにあるスクリプトをターミナルに貼り付け実行してください）
 2. ターミナルで `$ brew install glfw3` を実行します。
+
+追記：m1 macの場合
+
+m1 macの場合はHomebrewの指示通りに追加のコードを実行します。現時点では `echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/ユーザー名/.zprofile` 及び `eval "$(/opt/homebrew/bin/brew shellenv)"` を実行する、となっています。
+
+作者の環境ではインクルードパスとライブラリパスが通らなかったので、別途`export CPATH=$CPATH:/opt/homebrew/include` 及び `export LIBRARY_PATH=$LIBRARY_PATH:/opt/homebrew/lib`を実行してパスを通しました。
 
 #### Linux（Ubuntu）の場合
 

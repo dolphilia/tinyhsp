@@ -1,6 +1,6 @@
-﻿#define __HSPCUI__
+﻿//define __HSPCUI__
 //#define __HSPSTD__
-//#define __HSPEXT__
+#define __HSPEXT__
 
 // 上記のどれか１つを定義する
 
@@ -93,6 +93,7 @@ gcc tinyhsp.o stb_vorbis.o -o tinyhsp_ext -lopengl32 -lglfw3dll -lopenal32 -mwin
 #else
 #include <GL/gl.h>
 #endif
+//#include </opt/homebrew/Cellar/glfw/3.3.4/include/GLFW/glfw3.h>
 #include <GLFW/glfw3.h>
 #endif
 
@@ -2332,7 +2333,9 @@ command_mmload(execute_environment_t* e, execute_status_t* s, int arg_num)
 	}
 	else if (strcmp(extension, "ogg") == 0) {
 		int channels, rate, len;
+#ifndef __MACOS__
 		len = stb_vorbis_decode_filename(filename, &channels, &rate, &al_decoded);
+#endif
 		ALsizei size = round_one(len);
 		if (channels == 1) {
 			alBufferData(al_buffer, AL_FORMAT_MONO16, al_decoded, size * 2, rate); // バッファにデータを格納
